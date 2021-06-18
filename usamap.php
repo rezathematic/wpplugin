@@ -2,7 +2,7 @@
 /*
     @wordpress-plugin
     Plugin Name: WP USA Map
-    Description: USA Map
+    Description: USA Map - added some more description test update
     Version: 1.0.0
     Author: Custom Development
     Author URI: https://www.wordplus.org
@@ -12,12 +12,12 @@
 */
 defined('ABSPATH') || exit;
 
-if ( ! class_exists('WP_USA_MAP') ) {
+if (!class_exists('WP_USA_MAP')) {
     class WP_USA_MAP
     {
         public  $version = '1.0.0';
-        public  $path ;
-        public  $url ;
+        public  $path;
+        public  $url;
 
         public $options;
         public $shortcodes;
@@ -28,7 +28,7 @@ if ( ! class_exists('WP_USA_MAP') ) {
             static  $instance = null;
             // Only run these methods if they haven't been run previously
 
-            if ( null === $instance ) {
+            if (null === $instance) {
                 $instance = new WP_USA_MAP();
                 $instance->load_textDomain();
                 $instance->setup_vars();
@@ -44,21 +44,21 @@ if ( ! class_exists('WP_USA_MAP') ) {
 
         public function load_textDomain()
         {
-            load_plugin_textdomain( 'wp-usa-map', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+            load_plugin_textdomain('wp-usa-map', false, dirname(plugin_basename(__FILE__)) . '/languages');
         }
 
 
         public function setup_vars()
         {
-            $this->path = plugin_dir_path( __FILE__ );
-            $this->url  = plugin_dir_url( __FILE__ );
+            $this->path = plugin_dir_path(__FILE__);
+            $this->url  = plugin_dir_url(__FILE__);
         }
 
 
         public function setup_actions()
         {
             $this->require_files();
-            add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
+            add_action('wp_enqueue_scripts', array($this, 'load_scripts'));
         }
 
         public function require_files()
@@ -81,12 +81,12 @@ if ( ! class_exists('WP_USA_MAP') ) {
 
         public function load_scripts()
         {
-            wp_register_script( 'wpusamaps-mapdata-js', plugins_url( 'assets/mapdata.js', __FILE__ ), [], $this->version );
+            wp_register_script('wpusamaps-mapdata-js', plugins_url('assets/mapdata.js', __FILE__), [], $this->version);
 
-            wp_register_script( 'wpusamaps-usmaps-js', plugins_url( 'assets/usmap.js', __FILE__ ), [
+            wp_register_script('wpusamaps-usmaps-js', plugins_url('assets/usmap.js', __FILE__), [
                 'jquery',
                 'wpusamaps-mapdata-js',
-            ], $this->version );
+            ], $this->version);
 
             $fills = [
                 'defaultFill' => WP_USA_MAP()->settings['defaultColor']
@@ -100,29 +100,29 @@ if ( ! class_exists('WP_USA_MAP') ) {
             $wpusamap_now_in_state_page = false;
             $current_page = 0;
 
-            if( is_page() ){
+            if (is_page()) {
                 $current_page = (int) get_the_ID();
             }
 
-            foreach(WP_USA_MAP()->settings['states'] as $code => $state){
-                if( ! empty($state['page_id']) ) {
+            foreach (WP_USA_MAP()->settings['states'] as $code => $state) {
+                if (!empty($state['page_id'])) {
                     $page_ids[] = (int) $state['page_id'];
 
-                    if( $current_page === (int) $state['page_id'] ) {
+                    if ($current_page === (int) $state['page_id']) {
                         $wpusamap_now_in_state_page = true;
                         $wpusamap_state = $state;
                     }
                 }
             }
 
-            foreach(WP_USA_MAP()->settings['options'] as $fill){
-                $fills[ $fill['name'] ] = $fill['color'];
+            foreach (WP_USA_MAP()->settings['options'] as $fill) {
+                $fills[$fill['name']] = $fill['color'];
             }
             #echo '<pre>'; print_r($wpusamap_state); echo '</pre>';
             #echo '<pre>'; print_r($fills); echo '</pre>';
 
-            foreach(WP_USA_MAP()->settings['states'] as $code => $state){
-                if( $wpusamap_now_in_state_page ) {
+            foreach (WP_USA_MAP()->settings['states'] as $code => $state) {
+                if ($wpusamap_now_in_state_page) {
                     $fill = (isset($wpusamap_state['states'][$code])) ? $wpusamap_state['states'][$code] : 'defaultFill';
                     $color = $fills[$fill];
                     $hoverColor = WP_USA_MAP()->options->adjustBrightness($color, -0.3);
@@ -134,13 +134,13 @@ if ( ! class_exists('WP_USA_MAP') ) {
                 echo 'simplemaps_usmap_mapdata.state_specific["' . $code . '"]["color"]="' . $color . '";';
                 echo 'simplemaps_usmap_mapdata.state_specific["' . $code . '"]["hover_color"]="' . $hoverColor . '";';
 
-                if( ! empty($state['page_id']) ) {
-                    $permalink = get_permalink( $state['page_id'] );
-                    if( !! $permalink ) {
+                if (!empty($state['page_id'])) {
+                    $permalink = get_permalink($state['page_id']);
+                    if (!!$permalink) {
                         echo 'simplemaps_usmap_mapdata.state_specific["' . $code . '"]["url"]="' . $permalink . '";';
                     }
 
-                    if( (int) $current_page === (int) $state['page_id'] ){
+                    if ((int) $current_page === (int) $state['page_id']) {
                         $color = WP_USA_MAP()->settings['activeColor'];
                         $hoverColor = WP_USA_MAP()->options->adjustBrightness($color, 0.3);
 
