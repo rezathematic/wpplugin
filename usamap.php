@@ -12,6 +12,14 @@
 */
 defined('ABSPATH') || exit;
 
+require_once plugin_dir_path(__FILE__) . 'lib/wp-package-updater/class-wp-package-updater.php';
+
+$WP_USA_MAP_updater = new WP_Package_Updater(
+    'http://localhost:10008/',
+    wp_normalize_path(__FILE__),
+    wp_normalize_path(plugin_dir_path(__FILE__)),
+);
+
 if (!class_exists('WP_USA_MAP')) {
     class WP_USA_MAP
     {
